@@ -5,10 +5,9 @@ A Python data processing pipeline designed to collect and process meteorological
 ## 🎯 Project Purpose
 
 This project processes raw hourly weather data from meteorological stations to:
-- Calculate daily average, maximum, and minimum temperature values
-- Summarize wind speed, direction, and pressure information on a daily basis
-- Aggregate precipitation amounts and rainy hour counts
-- Extract humidity and dew point averages
+- Automate the collection of weather data
+- Convert detailed hourly data into daily summaries
+- Provide clean, ready-to-use datasets for further analysis or machine learning tasks
 - Generate annual CSV files for specified cities
 
 ## 📊 Supported Cities
