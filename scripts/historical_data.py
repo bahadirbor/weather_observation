@@ -12,7 +12,7 @@ def most_common(series):
     return stats.mode(series.values, keepdims=False)[0]
 
 
-def hourly_to_daily(city, nearest_station_id, starting_time, ending_time, data_root):
+def hourly_to_daily(city_name, nearest_station_id, starting_time, ending_time, data_root):
     # Data extraction and fetch
     data = Hourly(nearest_station_id, starting_time, ending_time)
     data_frame = data.fetch()
@@ -72,7 +72,6 @@ def hourly_to_daily(city, nearest_station_id, starting_time, ending_time, data_r
 
     # Year, month and day columns converted to date column
     daily_temp_stats['date'] = pd.to_datetime(daily_temp_stats[['year', 'month', 'day']])
-    daily_temp_stats.drop(columns=['year', 'month', 'day'], inplace=True)
 
     # Columns re-ordered
     new_column_order = ["date", "daily_avg_temp", "daily_max_temp", "daily_min_temp", "daily_avg_wind_speed",
@@ -82,12 +81,16 @@ def hourly_to_daily(city, nearest_station_id, starting_time, ending_time, data_r
 
     daily_temp_stats = daily_temp_stats.round(2)
 
-    for year, group in daily_temp_stats.groupby(["year"]):
-        # Save datas into csv files
-        os.makedirs(f"{data_root}/{year}", exist_ok=True)
-        file_path = f"{data_root}/{year}/{city.lower()}.csv"
-        group.drop(columns=['year']).to_csv(file_path, index=False)
+    daily_temp_stats["year"] = daily_temp_stats["date"].dt.year
 
+    for year, group in daily_temp_stats.groupby(["year"]):
+        # Save datas into CSV files and saved year folders
+        year = str(year)[1:5]
+        year_folder = os.path.join(data_root, year)
+        os.makedirs(year_folder, exist_ok=True)
+
+        file_path = os.path.join(year_folder, f"{city_name.lower()}_{year}.csv")
+        group.drop(columns=['year'], inplace=False).to_csv(file_path, index=False, float_format='%.2f')
 
 
 # Added cities for weather observation datas
@@ -102,5 +105,5 @@ cities = {
 start_time = datetime(2020, 1, 1)
 end_time = datetime(2025, 4, 30)
 
-for city, location in cities:
+for city, location in cities.items():
     hourly_to_daily(city, location, start_time, end_time, data_root)
