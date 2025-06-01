@@ -2,8 +2,14 @@ from meteostat import Hourly
 from datetime import datetime
 import pandas as pd
 import os
+import scipy.stats as stats
 
 data_root = "../data"
+
+
+def most_common(series):
+    # This func used to keep column's mode value
+    return stats.mode(series.values, keepdims=False)[0]
 
 
 def hourly_to_daily(city, nearest_station_id, starting_time, ending_time, data_root):
@@ -25,28 +31,52 @@ def hourly_to_daily(city, nearest_station_id, starting_time, ending_time, data_r
 
     df_new_two = data_frame.groupby(by=["year", "month", "day"])
 
+    # Create daily temperature data from hourly data
     daily_temp_stats = df_new_two['temp'].agg(
-        daily_temp_mean='mean',
-        daily_temp_max='max',
-        daily_temp_min='min'
+        daily_avg_temp='mean',
+        daily_max_temp='max',
+        daily_min_temp='min'
     ).reset_index()
 
+    # Create daily wind speed data from hourly data
     daily_wing_stats = df_new_two['wspd'].agg(
-        daily_wing_speed_mean='mean',
-        daily_wing_speed_max='max',
-        daily_wing_speed_min='min'
+        daily_avg_wind_speed='mean',
+        daily_max_wind_speed='max',
+        daily_min_wind_speed='min'
     ).reset_index()
 
-    daily_rhum = df_new_two["rhum"].agg(avg_rhum="mean")
-    daily_dwpt = df_new_two["dwpt"].agg(avg_dwpt="mean")
-    daily_pres = df_new_two["pres"].agg(avg_pres="mean")
+    # Create relative humidity, dew point, pressure data from hourly data
+    daily_rhum = df_new_two["rhum"].agg(avg_relative_humidity="mean")
+    daily_dwpt = df_new_two["dwpt"].agg(avg_dew_point="mean")
+    daily_pres = df_new_two["pres"].agg(avg_pressure="mean")
 
+    # Create wind direction column from hourly wind direction mode
+    daily_winddir = df_new_two["wdir"].agg(
+        wind_direction=most_common
+    )
+
+    # Concatenate all dataframes into daily_temp_stats
     daily_temp_stats = daily_temp_stats.merge(daily_rhum, on=['year', 'month', 'day'], how='left')
     daily_temp_stats = daily_temp_stats.merge(daily_dwpt, on=['year', 'month', 'day'], how='left')
     daily_temp_stats = daily_temp_stats.merge(daily_wing_stats, on=['year', 'month', 'day'], how='left')
     daily_temp_stats = daily_temp_stats.merge(daily_pres, on=['year', 'month', 'day'], how='left')
+    daily_temp_stats = daily_temp_stats.merge(daily_winddir, on=['year', 'month', 'day'], how='left')
 
+    # Year, month and day columns converted to date column
+    daily_temp_stats['date'] = pd.to_datetime(daily_temp_stats[['year', 'month', 'day']])
+    daily_temp_stats.drop(columns=['year', 'month', 'day'], inplace=True)
 
+    # Columns re-ordered
+    new_column_order = ["date", "daily_avg_temp", "daily_max_temp", "daily_min_temp", "daily_avg_wind_speed",
+                        "daily_max_wind_speed", "daily_min_wind_speed", "wind_direction", "avg_relative_humidity",
+                        "avg_dew_point", "avg_pressure"]
+    daily_temp_stats = daily_temp_stats[new_column_order]
+
+    for year, group in daily_temp_stats.groupby(["year"]):
+        # Save datas into csv files
+        os.makedirs(f"{data_root}/{year}", exist_ok=True)
+        file_path = f"{data_root}/{year}/{city.lower()}.csv"
+        group.drop(columns=['year']).to_csv(file_path, index=False)
 
 
 
