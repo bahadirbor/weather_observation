@@ -81,16 +81,9 @@ def hourly_to_daily(city_name, nearest_station_id, starting_time, ending_time, d
 
     daily_temp_stats = daily_temp_stats.round(2)
 
-    daily_temp_stats["year"] = daily_temp_stats["date"].dt.year
-
-    for year, group in daily_temp_stats.groupby(["year"]):
-        # Save datas into CSV files and saved year folders
-        year = str(year)[1:5]
-        year_folder = os.path.join(data_root, year)
-        os.makedirs(year_folder, exist_ok=True)
-
-        file_path = os.path.join(year_folder, f"{city_name.lower()}_{year}.csv")
-        group.drop(columns=['year'], inplace=False).to_csv(file_path, index=False, float_format='%.2f')
+    # Export city weather datas to CSV files
+    file_path = os.path.join(data_root, f"{city_name.lower()}.csv")
+    daily_temp_stats.to_csv(file_path, index=False, float_format='%.2f')
 
 
 # Added cities for weather observation datas
