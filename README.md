@@ -2,6 +2,8 @@
 
 A Python data processing pipeline designed to collect and process meteorological data from major cities in Turkey. This project transforms hourly weather data into daily statistics, creating analysis-ready datasets.
 
+[Kaggle Dataset](https://www.kaggle.com/datasets/bahadirbor/turkish-cities-daily-weather-dataset)
+
 ## 🎯 Project Purpose
 
 This project processes raw hourly weather data from meteorological stations to:
@@ -14,13 +16,16 @@ This project processes raw hourly weather data from meteorological stations to:
 
 The project currently collects data for the following Turkish cities:
 
-| City | Station ID |
-|------|------------|
-| Istanbul | 17060 |
-| Ankara | LTAB0 |
-| Izmir | 17218 |
-| Bursa | 17116 |
-| Adana | 17352 |
+- İstanbul
+- Ankara
+- İzmir
+- Bursa
+- Antalya
+- Konya
+- Adana
+- Şanlıurfa
+- Gaziantep
+- Kocaeli
 
 
 ## 🚀 Usage
