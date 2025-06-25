@@ -3,9 +3,12 @@ from datetime import datetime
 import pandas as pd
 import os
 import scipy.stats as stats
+import glob
 
 data_root = "../data"
+csv_files = glob.glob("../data/*.csv")
 
+city_dataframes = []
 
 def most_common(series):
     # This func used to keep column's mode value
@@ -73,8 +76,12 @@ def hourly_to_daily(city_name, nearest_station_id, starting_time, ending_time, d
     # Year, month and day columns converted to date column
     daily_temp_stats['date'] = pd.to_datetime(daily_temp_stats[['year', 'month', 'day']])
 
+    # Add city name column to avoid data chaos
+    daily_temp_stats['city_name'] = city_name
+    daily_temp_stats['city_name'] = daily_temp_stats['city_name'].astype("string")
+
     # Columns re-ordered
-    new_column_order = ["date", "daily_avg_temp", "daily_max_temp", "daily_min_temp", "daily_avg_wind_speed",
+    new_column_order = ["date","city_name", "daily_avg_temp", "daily_max_temp", "daily_min_temp", "daily_avg_wind_speed",
                         "daily_max_wind_speed", "daily_min_wind_speed", "wind_direction", "avg_relative_humidity",
                         "avg_dew_point", "avg_pressure", "precipitation_sum", "rainy_hour_sum"]
     daily_temp_stats = daily_temp_stats[new_column_order]
@@ -100,8 +107,18 @@ cities = {
     "Kocaeli": "LTBQ0"
 }
 
+# Date section
 start_time = datetime(2020, 1, 1)
 end_time = datetime(2025, 5, 31)
 
+# Data extraction
 for city, location in cities.items():
     hourly_to_daily(city, location, start_time, end_time, data_root)
+
+# Merge all city data into one CSV file
+for file in csv_files:
+    dataframe = pd.read_csv(file)
+    city_dataframes.append(dataframe)
+
+cities = pd.concat(city_dataframes, ignore_index=True)
+cities.to_csv('../data/cities.csv', index=False, encoding='utf-8')
