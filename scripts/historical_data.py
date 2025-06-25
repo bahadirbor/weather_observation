@@ -92,11 +92,16 @@ cities = {
     "Ankara": "LTAB0",
     "İzmir": "17218",
     "Bursa": "17116",
-    "Adana": "17352"
+    "Antalya": "17300",
+    "Konya": "17244",
+    "Adana": "17352",
+    "Şanlıurfa": "LTCS0",
+    "Gaziantep": "17260",
+    "Kocaeli": "LTBQ0"
 }
 
 start_time = datetime(2020, 1, 1)
-end_time = datetime(2025, 4, 30)
+end_time = datetime(2025, 5, 31)
 
 for city, location in cities.items():
     hourly_to_daily(city, location, start_time, end_time, data_root)
