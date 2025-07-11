@@ -36,7 +36,7 @@ The project currently collects data for the following Turkish cities:
 python historical_data.py
 ```
 
-This command downloads and processes meteorological data for all cities from Jan 2020 - April 2025.
+This command downloads and processes meteorological data for all cities from start_time to end_time.
 
 ### Finding Nearby Stations
 
