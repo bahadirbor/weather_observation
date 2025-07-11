@@ -4,6 +4,10 @@ import pandas as pd
 import os
 import scipy.stats as stats
 import glob
+import warnings
+
+
+warnings.filterwarnings('ignore')
 
 data_root = "../data"
 csv_files = glob.glob("../data/*.csv")
@@ -109,7 +113,7 @@ cities = {
 
 # Date section
 start_time = datetime(2020, 1, 1)
-end_time = datetime(2025, 5, 31)
+end_time = datetime(2025, 7, 1)
 
 # Data extraction
 for city, location in cities.items():
