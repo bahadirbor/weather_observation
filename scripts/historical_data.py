@@ -125,4 +125,4 @@ for file in csv_files:
     city_dataframes.append(dataframe)
 
 cities = pd.concat(city_dataframes, ignore_index=True)
-cities.to_csv('../data/cities.csv', index=False, encoding='utf-8')
+cities.to_csv('../data/merged/cities.csv', index=False, encoding='utf-8')
