@@ -5,7 +5,8 @@ import os
 import scipy.stats as stats
 import glob
 import warnings
-
+import subprocess
+import sys
 
 warnings.filterwarnings('ignore')
 
@@ -13,6 +14,16 @@ data_root = "../data"
 csv_files = glob.glob("../data/*.csv")
 
 city_dataframes = []
+
+def check_and_update():
+    """This function controls library versions and upgrades"""
+    env = os.environ.copy()
+    env['PIP_DISABLE_PIP_VERSION_CHECK'] = '1'
+    with open("requirements.txt", "r") as libs:
+        for line in libs:
+            subprocess.check_call([sys.executable, "-m", "pip", "install", "--upgrade", line])
+
+    print("Library upgrades completed!")
 
 def most_common(series):
     # This func used to keep column's mode value
@@ -113,7 +124,10 @@ cities = {
 
 # Date section
 start_time = datetime(2020, 1, 1)
-end_time = datetime(2025, 7, 1)
+end_time = datetime(2025, 10, 1)
+
+# Library upgrades
+check_and_update()
 
 # Data extraction
 for city, location in cities.items():
