@@ -16,10 +16,11 @@ csv_files = glob.glob("../data/*.csv")
 city_dataframes = []
 
 def check_and_update():
-    """This function controls library versions and updates"""
+    """This function controls library versions and updates
+    You don't have to run everytime"""
     env = os.environ.copy()
     env['PIP_DISABLE_PIP_VERSION_CHECK'] = '1'
-    with open("requirements.txt", "r") as libs:
+    with open("../requirements.txt", "r") as libs:
         for line in libs:
             subprocess.check_call([sys.executable, "-m", "pip", "install", "--upgrade", line])
 
@@ -124,13 +125,14 @@ cities = {
 
 # Date section
 start_time = datetime(2020, 1, 1)
-end_time = datetime(2025, 10, 1)
+end_time = datetime(2025, 11, 1)
 
-# Library updates
-check_and_update()
+# Library updates (optional)
+# check_and_update()
 
 # Data extraction
 for city, location in cities.items():
+    print(f"{city} data preparing...")
     hourly_to_daily(city, location, start_time, end_time, data_root)
 
 # Merge all city data into one CSV file
