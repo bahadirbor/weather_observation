@@ -23,7 +23,7 @@ def check_and_update():
     with open("../requirements.txt", "r") as libs:
         for line in libs:
             subprocess.check_call([sys.executable, "-m", "pip", "install", "--upgrade", line])
-
+            print(f"Updated {line}...")
     print("Library updates completed!")
 
 def most_common(series):
@@ -124,10 +124,10 @@ cities = {
 }
 
 # Date section
-start_time = datetime(2020, 1, 1)
+start_time = datetime(2019, 1, 1)
 end_time = datetime(2025, 11, 1)
 
-# Library updates (optional)
+# Library updates is optional but if you do not run, the program may not work
 # check_and_update()
 
 # Data extraction
